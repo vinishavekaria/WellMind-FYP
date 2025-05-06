@@ -1,0 +1,276 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        /* Reset*/
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Light efffects */
+        .light {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: float 8s infinite ease-in-out;
+        }
+
+        .light:nth-child(1) {
+            top: 20%;
+            left: 15%;
+            background: rgba(103, 232, 249, 0.15);
+            animation-delay: 0s;
+        }
+
+        .light:nth-child(2) {
+            top: 60%;
+            left: 75%;
+            background: rgba(255, 73, 202, 0.15);
+            animation-delay: 2s;
+        }
+
+        .light:nth-child(3) {
+            top: 75%;
+            left: 25%;
+            background: rgba(106, 130, 251, 0.15);
+            animation-delay: 4s;
+        }
+
+        .light:nth-child(4) {
+            top: 10%;
+            left: 80%;
+            background: rgba(103, 232, 249, 0.15);
+            animation-delay: 6s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-40px) scale(1.2);
+            }
+        }
+
+        .login-container {
+            background: rgba(25, 30, 56, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 40px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header */
+        header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, #67e8f9, #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+        /* Form Styles */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #d1d5db;
+            letter-spacing: 0.5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #67e8f9;
+            box-shadow: 0 0 0 2px rgba(103, 232, 249, 0.2);
+        }
+
+        /* Password toggle */
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 40px;
+            color: #a1a1aa;
+            cursor: pointer;
+            font-size: 0.8rem;
+            user-select: none;
+        }
+
+        .password-toggle:hover {
+            color: #67e8f9;
+        }
+
+        /* Buttonstyles */
+        button {
+            background: linear-gradient(90deg, #67e8f9, #8b5cf6);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #7ae7f4, #9361f7);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(103, 232, 249, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Signup Link */
+        .signup-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: #d1d5db;
+        }
+
+        .signup-link a {
+            color: #67e8f9;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .signup-link a:hover {
+            color: #a855f7;
+            text-decoration: underline;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 30px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 25px 20px;
+                width: 95%;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            button {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!--light effects -->
+    <div class="light"></div>
+    <div class="light"></div>
+    <div class="light"></div>
+    <div class="light"></div>
+    
+    <div class="login-container">
+        <header>
+            <h1>Login</h1>
+        </header>
+
+        <form method="POST" class="login-form">
+            {% csrf_token %}
+            <!-- Username field -->
+            <div class="form-group">
+                <label for="id_username">Username</label>
+                <input type="text" id="id_username" name="username" required>
+            </div>
+
+            <!-- Password field -->
+            <div class="form-group">
+                <label for="id_password">Password</label>
+                <input type="password" id="id_password" name="password" required>
+                <span class="password-toggle" onclick="togglePassword('id_password')">Show</span>
+            </div>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <p class="signup-link">Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+    </div>
+
+    <script>
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const toggle = input.nextElementSibling;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                toggle.textContent = 'Hide';
+            } else {
+                input.type = 'password';
+                toggle.textContent = 'Show';
+            }
+        }
+    </script>
+</body>
+</html>

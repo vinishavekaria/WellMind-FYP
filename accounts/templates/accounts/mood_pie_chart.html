@@ -1,0 +1,37 @@
+{% extends 'accounts/base_generic.html' %}
+
+{% block content %}
+<a href="{% url 'journal_entry' %}" class="btn btn-info">Create Entry</a>
+<a href="{% url 'journal_entries' %}" class="btn btn-info">View Journal Entries</a>
+<a href="{% url 'mood_chart' %}" class="btn btn-primary">Mood Chart</a>
+<a href="{% url 'sentiment_line_chart' %}" class="btn btn-info">View Sentiment Line Chart</a>
+<a href="{% url 'logout' %}" class="btn btn-info">Logout</a>
+
+<h2>Your Mood Pie Chart</h2>
+
+<!-- Month Filter -->
+<form method="GET" action="{% url 'mood_pie_chart' %}">
+    <label for="month">Select a Month:</label>
+    <select id="month" name="month">
+        <option value="" {% if not selected_month %}selected{% endif %}>All Months</option>
+        {% for month in months %}
+            <option value="{{ forloop.counter }}" {% if selected_month == forloop.counter|stringformat:"s" %}selected{% endif %}>{{ month }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Filter</button>
+</form>
+
+<h3>Mood Distribution for Your Journal Entries</h3>
+
+{% if no_entries_for_month %}
+    <p>No entries for this month.</p>
+{% else %}
+    <!-- Display the mood pie chart -->
+    <div class="container">
+        <div class="chart">
+            <img src="data:image/png;base64,{{ pie_chart_base64 }}" alt="Mood Distribution Pie Chart" />
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}

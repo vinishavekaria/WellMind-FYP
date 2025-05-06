@@ -1,0 +1,100 @@
+{% extends "accounts/base_generic.html" %}
+
+{% block content %}
+<style>
+  body {
+    background-color: #f4f9f9;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .wellness-container {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1.2s ease-in-out;
+  }
+
+  h1, h2 {
+    color: #3c6e71;
+    font-weight: 700;
+  }
+
+  ul li {
+    margin-bottom: 12px;
+  }
+
+  section {
+    margin-bottom: 50px;
+  }
+
+  ul {
+    background: #eaf4f4;
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .highlight {
+    background: #d9f8f0;
+    padding: 10px;
+    border-left: 5px solid #3c6e71;
+    border-radius: 8px;
+  }
+</style>
+
+<div class="container mt-5 wellness-container">
+  <h1 class="mb-4 text-center">🌿 Wellness Resources</h1>
+
+  <!-- Science behind meditation -->
+  <section>
+    <h2>🧠 The Science Behind Meditation</h2>
+    <p class="highlight">
+      Meditation reduces stress by lowering cortisol levels and increasing activity in parts of the brain responsible for calmness and emotional regulation. Just a few minutes a day can improve focus and lower anxiety.
+    </p>
+    <p>
+      It activates your parasympathetic nervous system, promoting a "rest and digest" state. Meditation also improves sleep and can physically alter the brain to enhance emotional strength.
+    </p>
+  </section>
+
+  <!-- Coping Techniques -->
+  <section>
+    <h2>🛠️ Coping Techniques</h2>
+    <ul>
+      <li><strong>Journaling:</strong> Write down your emotions to gain clarity.</li>
+      <li><strong>Box Breathing:</strong> Inhale 4s, hold 4s, exhale 4s, hold 4s. Repeat 4 times.</li>
+      <li><strong>Talk to Someone:</strong> A chat with a friend or therapist helps more than you think.</li>
+      <li><strong>Distraction:</strong> Read, sketch, or do something creative to shift your focus.</li>
+      <li><strong>Grounding (5‑4‑3‑2‑1):</strong> Name 5 things you see, 4 you feel, 3 you hear, 2 you smell, 1 you taste.</li>
+    </ul>
+  </section>
+
+  <!-- Mindfulness activities -->
+  <section>
+    <h2>🧘 Mindfulness Activities</h2>
+    <ul>
+      <li><strong>Body Scan:</strong> Close your eyes and mentally scan your body to release tension.</li>
+      <li><strong>Mindful Walking:</strong> Walk slowly and focus on each step and breath.</li>
+      <li><strong>Guided Meditation:</strong> Use a <a href="{% url 'mood_music' %}">YouTube video</a> or an app like Headspace or Calm.</li>
+      <li><strong>Breathing Exercises:</strong> Breathe deeply for 2-5 minutes with full attention.</li>
+      <li><strong>Mindful Eating:</strong> Eat slowly and savor each bite without distractions.</li>
+    </ul>
+  </section>
+
+  <!-- Extra info and exercises -->
+  <section>
+    <h2>📌 Important Info & Exercises</h2>
+    <ul>
+      <li><strong>Stay Active:</strong> Even 10 minutes of walking can uplift your mood.</li>
+      <li><strong>Hydrate:</strong> Drink at least 2L of water a day for mental clarity.</li>
+      <li><strong>Gratitude Practice:</strong> Write 3 things you're grateful for daily.</li>
+      <li><strong>Sleep Hygiene:</strong> Power down electronics before bed and stick to a sleep routine.</li>
+      <li><strong>Intentions:</strong> Start each day with a short intention like “I will be kind to myself.”</li>
+    </ul>
+  </section>
+</div>
+{% endblock %}

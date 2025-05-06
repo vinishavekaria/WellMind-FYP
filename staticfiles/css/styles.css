@@ -1,0 +1,142 @@
+html, body {
+    height: 100%; /* Ensure full page height */
+    margin: 0;
+    overflow-y: auto;
+    background-image: url('/static/images/home_img.png'); /* Set your image path */
+    background-size: cover; /* Make sure the image covers the entire page */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f8ff; /* Light background color */
+    color: #333; /* Dark text color */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body.light-mode {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+body.night-mode {
+    background-color: #000; /* Black background for night mode */
+    color: #21033b; /* White text for contrast */
+}
+
+header {
+    background-color: #ffcccb;
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    color: #004d99;
+    font-size: 2.5em;
+    margin: 0;
+}
+
+nav {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.menu {
+    list-style-type: none;
+    padding: 0;
+}
+
+.menu li {
+    display: inline-block;
+    margin: 0 15px;
+}
+
+.menu a {
+    text-decoration: none;
+    color: white; /* White text for contrast */
+    background-color: #004d99; /* Button background */
+    padding: 12px 25px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.menu a:hover {
+    background-color: #003366;
+    transform: scale(1.05);
+}
+
+body.night-mode .menu a {
+    background-color: #333; /* Dark background for menu items in night mode */
+    color: #f4f4f4; /* Light text for contrast */
+}
+
+body.night-mode .menu a:hover {
+    background-color: #444;
+}
+
+main {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+    flex: 1;
+}
+
+footer {
+    text-align: center;
+    position: relative;
+    bottom: 0;
+    background-color: #004d99;
+    color: white;
+    padding: 2px 0;
+    font-size: 0.9em;
+}
+
+body.night-mode footer {
+    background-color: #333; /* Dark footer in night mode */
+}
+
+.settings-section {
+    margin: 20px 0;
+    background-color: #ffffff; /* Light section background */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+body.night-mode .settings-section {
+    background-color: #003366; /* Dark blue background for settings sections in night mode */
+    color: #fff; /* White text in night mode */
+}
+
+input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+button {
+    background-color: #004d99;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #003366;
+}
+
+body.night-mode button {
+    background-color: #444; /* Dark button in night mode */
+}
+
+body.night-mode button:hover {
+    background-color: #555;
+}

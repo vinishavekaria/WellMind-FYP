@@ -1,0 +1,566 @@
+<!-- base_generic.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Journal{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-color: #f5e7dc;
+            --secondary-color: #e1c5b3;
+            --accent-color: #a67c52;
+            --text-color: #5a4a3f;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Garamond', 'Times New Roman', serif;
+            background-color: #f8f3ed;
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="none" stroke="%23e1c5b3" stroke-width="0.5" stroke-opacity="0.2"/></svg>');
+        }
+        
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        /* Enhanced Header Styles */
+        header {
+            background-color: var(--primary-color);
+            height: var(--header-height);
+            box-shadow: 0 4px 10px var(--shadow-color);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 100;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg width="180" height="180" xmlns="http://www.w3.org/2000/svg"><path d="M 30 90 Q 90 30, 150 90 T 270 90" fill="none" stroke="%23a67c52" stroke-width="1" stroke-opacity="0.2"/></svg>');
+            opacity: 0.5;
+            z-index: 1;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        header h1 {
+            font-size: 2.2rem;
+            color: var(--accent-color);
+            font-weight: normal;
+            letter-spacing: 2px;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Improved Menu Toggle Button */
+        .menu-toggle {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px;
+            border: 1px solid rgba(166, 124, 82, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .menu-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 3px 5px var(--shadow-color);
+        }
+        
+        .menu-toggle .bar {
+            width: 22px;
+            height: 2px;
+            background-color: var(--accent-color);
+            margin: 3px 0;
+            transition: 0.4s;
+            border-radius: 2px;
+        }
+        
+        .menu-toggle.active .bar:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 5px);
+        }
+        
+        .menu-toggle.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .menu-toggle.active .bar:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -5px);
+        }
+        
+        /* Improved Menu Links */
+        .menu-links {
+            display: none;
+            flex-direction: column;
+            background: white;
+            border: 1px solid var(--secondary-color);
+            border-radius: 10px;
+            padding: 10px;
+            position: absolute;
+            top: calc(var(--header-height) - 10px);
+            left: 20px;
+            z-index: 10;
+            width: 220px;
+            box-shadow: 0 8px 16px var(--shadow-color);
+            animation: slideDown 0.3s ease;
+            opacity: 0;
+            transform: translateY(-10px);
+            pointer-events: none;
+        }
+        
+        .menu-links.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+        
+        .menu-links a {
+            padding: 12px 15px;
+            text-decoration: none;
+            color: var(--text-color);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            font-size: 1.05rem;
+        }
+        
+        .menu-links a:hover {
+            background-color: var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        .menu-links a:not(:last-child) {
+            border-bottom: 1px dashed rgba(166, 124, 82, 0.2);
+        }
+
+        .menu-links a i, 
+        .menu-links a .menu-icon {
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .pen-icon {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            opacity: 0.7;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .journal-container {
+            background-color: var(--primary-color);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 8px 16px var(--shadow-color);
+            position: relative;
+            margin-bottom: 2rem;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        
+        .journal-container::before {
+            content: "";
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            bottom: 12px;
+            left: 12px;
+            border: 1px dashed var(--accent-color);
+            border-radius: 5px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        h1 {
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            font-weight: normal;
+            text-align: center;
+            position: relative;
+        }
+        
+        h1::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 3px;
+            background-color: var(--secondary-color);
+            margin: 10px auto 0;
+        }
+        
+        form {
+            margin-top: 2rem;
+        }
+        
+        form p {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+            font-size: 1.1rem;
+        }
+        
+        select, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--secondary-color);
+            border-radius: 5px;
+            font-family: 'Garamond', 'Times New Roman', serif;
+            color: var(--text-color);
+            resize: vertical;
+            box-shadow: inset 0 1px 3px var(--shadow-color);
+        }
+        
+        textarea {
+            min-height: 200px;
+            background-image: linear-gradient(to bottom, transparent, transparent 29px, #e1c5b3 30px);
+            background-size: 100% 30px;
+            line-height: 30px;
+            padding: 0 0.8rem;
+        }
+        
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Garamond', 'Times New Roman', serif;
+            font-size: 1rem;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button:hover {
+            background-color: #8b6842;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px var(--shadow-color);
+        }
+        
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+        
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            background-color: #8b6842;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px var(--shadow-color);
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+        }
+        
+        .btn i {
+            margin-right: 5px;
+        }
+        
+        footer {
+            background-color: var(--primary-color);
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+            border-top: 1px solid var(--secondary-color);
+        }
+        
+        footer p {
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+        
+        /* Animated elements */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        .doodle {
+            position: absolute;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+        
+        .doodle-1 {
+            bottom: 20px;
+            left: 20px;
+            font-size: 2rem;
+        }
+        
+        .doodle-2 {
+            top: 40px;
+            right: 40px;
+            font-size: 1.5rem;
+        }
+        
+        .page-curl {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            background-color: var(--secondary-color);
+            border-radius: 0 0 0 20px;
+            box-shadow: -2px -2px 5px var(--shadow-color);
+            transform: rotate(-90deg);
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Additional animations */
+        .animate__fadeIn {
+            animation-duration: 1.5s;
+        }
+        
+        .animate__fadeIn.delay-1 {
+            animation-delay: 0.2s;
+        }
+        
+        .animate__fadeIn.delay-2 {
+            animation-delay: 0.4s;
+        }
+        
+        .animate__fadeIn.delay-3 {
+            animation-delay: 0.6s;
+        }
+        
+        /* Media queries */
+        @media (max-width: 768px) {
+            .content {
+                padding: 1rem;
+            }
+            
+            .journal-container {
+                padding: 1.5rem;
+            }
+            
+            header {
+                padding: 0 1rem;
+                height: 70px;
+            }
+            
+            header h1 {
+                font-size: 1.6rem;
+            }
+            
+            .menu-links {
+                width: calc(100% - 40px);
+                left: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <header>
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="menu-toggle" id="menuToggle" onclick="toggleMenu()">
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                    </div>
+                    <h1 class="animate__animated animate__fadeIn">Welcome to Your Journal</h1>
+                </div>
+                <i class="fas fa-feather-alt pen-icon floating"></i>
+            </div>
+        
+            <nav>
+                <div id="menuLinks" class="menu-links">
+                    <a href="{% url 'welcome' %}"><span class="menu-icon">🏠</span> Home Page</a>
+                    <a href="{% url 'journal_entry' %}"><span class="menu-icon">📓</span> Journal</a>
+                    <a href="{% url 'journal_entries' %}"><span class="menu-icon">📚</span> My Entries</a>
+                    <a href="{% url 'todo_list' %}"><span class="menu-icon">📝</span> To-Do</a>
+                    <a href="{% url 'mood_dashboard' %}"><span class="menu-icon">📊</span> Mood Charts</a>
+                    <a href="{% url 'mood_music' %}"><span class="menu-icon">🎵</span> Mood Music</a>
+                    <a href="{% url 'wellness_tips' %}"><span class="menu-icon">💡</span> Wellness Tips</a>
+                    <a href="{% url 'resources' %}"><span class="menu-icon">🌿</span> Resources</a>
+                    <a href="{% url 'settings' %}"><span class="menu-icon">⚙️</span> Settings</a>
+                    <a href="{% url 'logout' %}"><span class="menu-icon">🚪</span> Logout</a>
+                </div>
+            </nav>
+        </header>
+        
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+
+        <footer>
+            <p>Your personal space for reflection and growth</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menuToggle = document.getElementById('menuToggle');
+            const menuLinks = document.getElementById('menuLinks');
+            
+            menuToggle.classList.toggle('active');
+            menuLinks.classList.toggle('active');
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close menu when clicking outside
+            document.addEventListener('click', function(event) {
+                const menuToggle = document.getElementById('menuToggle');
+                const menuLinks = document.getElementById('menuLinks');
+                
+                if (!menuToggle.contains(event.target) && !menuLinks.contains(event.target) && menuLinks.classList.contains('active')) {
+                    menuToggle.classList.remove('active');
+                    menuLinks.classList.remove('active');
+                }
+            });
+            
+            // Add entrance animations
+            const elements = document.querySelectorAll('.journal-container, h1, form p, button');
+            elements.forEach((el, index) => {
+                el.classList.add('animate__animated', 'animate__fadeIn', `delay-${index % 3 + 1}`);
+            });
+            
+            // Add floating animation to textarea
+            const textarea = document.querySelector('textarea');
+            if (textarea) {
+                textarea.addEventListener('focus', function() {
+                    this.style.boxShadow = '0 0 15px rgba(166, 124, 82, 0.3)';
+                });
+                
+                textarea.addEventListener('blur', function() {
+                    this.style.boxShadow = 'inset 0 1px 3px var(--shadow-color)';
+                });
+            }
+            
+            // Add page flip effect on button hover
+            const buttons = document.querySelectorAll('button, .btn');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    const journalContainer = document.querySelector('.journal-container');
+                    if (journalContainer) {
+                        journalContainer.style.transform = 'rotateX(2deg) rotateY(-1deg)';
+                    }
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    const journalContainer = document.querySelector('.journal-container');
+                    if (journalContainer) {
+                        journalContainer.style.transform = 'rotateX(0) rotateY(0)';
+                    }
+                });
+            });
+            
+            // Create doodle elements
+            const journalContainer = document.querySelector('.journal-container');
+            if (journalContainer) {
+                const doodle1 = document.createElement('i');
+                doodle1.className = 'fas fa-heart doodle doodle-1';
+                journalContainer.appendChild(doodle1);
+                
+                const doodle2 = document.createElement('i');
+                doodle2.className = 'fas fa-star doodle doodle-2';
+                journalContainer.appendChild(doodle2);
+                
+                const pageCurl = document.createElement('div');
+                pageCurl.className = 'page-curl';
+                journalContainer.appendChild(pageCurl);
+            }
+        });
+    </script>
+</body>
+</html>

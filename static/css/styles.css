@@ -1,0 +1,241 @@
+/* Global Styles */
+html, body {
+    height: 100%; /* Ensure full page height */
+    margin: 0;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-y: scroll;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Section Styles */
+section {
+    padding: 50px 20px;  /* Add padding to sections */
+    text-align: center;
+    height: 100vh;  /* Full viewport height for the first section */
+}
+
+/* Section 1: Background Image */
+.section-1 {
+    background-image: url('/static/images/home_img.png'); /* Set your image path */
+    background-size: cover; /* Make sure the image covers the entire page */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    color: white;  /* Light text color for contrast */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+
+
+
+/* Welcome Text Styles */
+.welcome-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    animation: fadeIn 2s ease-out, slideDown 3s ease-out;
+}
+
+.welcome-text span {
+    display: block; /* Makes each line a block element so it appears on its own line */
+    margin-bottom: 10px; /* Spacing between the lines */
+}
+
+/* Styling for each line */
+.line-1 {
+    font-family: 'Bookman Old Style', sans-serif; /* Example font */
+    font-size: 1rem; /* Adjust font size */
+    font-weight: light;
+    color: #000000; /* Adjust the color */
+}
+
+.line-2 {
+    font-family: 'Bookman Old Style', serif; /* Example font */
+    font-size: 4rem; /* Adjust font size */
+    font-weight: bold;
+    color: #000000; /* Adjust the color */
+}
+
+.line-3 {
+    font-family: 'Courier New', monospace; /* Example font */
+    font-size: 2rem; /* Adjust font size */
+    font-weight: normal;
+    color: #000000; /* Adjust the color */
+}
+
+/* Scroll Link Styles */
+.scroll-link {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-top: 30px;
+    display: inline-block;
+}
+
+.scroll-link:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Scroll down animation */
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes slideDown {
+    0% { transform: translateY(-50px); }
+    100% { transform: translateY(0); }
+}
+
+/* Section Styling */
+.section-2 {
+    display: flex; /* Use flexbox to arrange content */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    width: 100%; /* Make section take full width of the screen */
+    height: 100vh; /* Make section take full screen height */
+    background-color: #ececfc; /* Light background color for Section 2 */
+    color: #333; /* Text color */
+    padding: 20px; /* Add padding around the section */
+    box-sizing: border-box; /* Include padding in width/height calculations */
+    gap: 20px; /* Add space between left and right boxes */
+}
+
+/* Left Box: Text Content */
+.left-box {
+    flex: 1; /* Take up 50% of the width */
+    padding: 20px; /* Add spacing inside the box */
+    display: flex; /* Use flexbox inside for vertical stacking */
+    flex-direction: column; /* Stack content vertically */
+    justify-content: center; /* Center content vertically within the left box */
+    align-items: flex-start; /* Align content to the left inside the box */
+    gap: 20px; /* Add space between title and paragraph */
+}
+
+.left-box h2 {
+    font-size: 2.5rem; /* Title font size */
+    margin: 0; /* Remove default margins */
+}
+
+.left-box p {
+    font-size: 1.2rem; /* Paragraph font size */
+    line-height: 1.6; /* Improve readability */
+    margin: 0; /* Remove default margins */
+}
+
+/* Right Box: Image */
+.right-box {
+    flex: 1; /* Take up 50% of the width */
+    display: flex; /* Use flexbox to align the image */
+    justify-content: center; /* Center the image horizontally */
+    align-items: center; /* Center the image vertically */
+    padding: 20px; /* Add padding */
+    box-sizing: border-box; /* Include padding in calculations */
+}
+
+.right-box img {
+    max-width: 100%; /* Make image responsive */
+    max-height: 90%; /* Ensure the image doesn't overflow vertically */
+    object-fit: contain; /* Scale image proportionally to fit the box */
+}
+
+
+
+
+
+/* Navigation Styles */
+nav {
+    position: absolute; /* Make nav stick to the top of the section */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10; /* Ensure the nav is on top of the background */
+    padding: 20px;
+    text-align: left; /* Align the links to the left */
+}
+
+.menu {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;  /* Ensure items are displayed inline */
+}
+
+.menu li {
+    margin: 0 15px;
+}
+
+.menu a {
+    text-decoration: none;
+    color: rgb(0, 0, 0); /* White text for contrast */
+    background-color: transparent; /* Button background */
+    border: 1px solid black;
+    padding: 9px 25px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.menu a:hover {
+    background-color: #faa5dc;
+    transform: scale(1.05);
+}
+
+/* Footer Styles */
+footer {
+    text-align: center;
+    position: relative;
+    bottom: 0;
+    background-color: #004d99;
+    color: white;
+    padding: 2px 0;
+    font-size: 0.9em;
+}
+
+/* Settings Section Styles */
+.settings-section {
+    margin: 20px 0;
+    background-color: #ffffff; /* Light section background */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Input & Button Styles */
+input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+button {
+    background-color: #004d99;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #003366;
+}
+
+body.night-mode button {
+    background-color: #444; /* Dark button in night mode */
+}
+
+body.night-mode button:hover {
+    background-color: #555;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}

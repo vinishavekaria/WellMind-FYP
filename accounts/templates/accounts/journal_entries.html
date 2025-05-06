@@ -1,0 +1,805 @@
+{% extends 'accounts/base_generic.html' %}
+{% load static %}
+
+{% block title %}Your Journal Entries{% endblock %}
+{% block content %}
+
+<div class="journal-entries-container animate__animated animate__fadeIn">
+  <h1 class="journal-title">
+    <i class="fas fa-book-open floating"></i>
+    Your Journal Entries
+  </h1>
+
+  <!-- Filter-->
+  <div class="filter-paper animate__animated animate__fadeIn delay-1">
+    <div class="paper-content">
+      <h3><i class="fas fa-filter"></i> Find Specific Entries</h3>
+      
+      <form method="GET" action="{% url 'journal_entries' %}" class="filter-form">
+        {% csrf_token %}
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="date"><i class="fas fa-calendar-day"></i> Date:</label>
+            <input type="date" id="date" name="date" value="{{ request.GET.date }}" class="fancy-input">
+          </div>
+          
+          <div class="form-group">
+            <label for="mood"><i class="fas fa-smile"></i> Mood:</label>
+            <select id="mood" name="mood" class="fancy-input">
+              <option value="">All Moods</option>
+              {% for mood in moods %}
+                <option value="{{ mood }}" {% if request.GET.mood == mood %}selected{% endif %}>{{ mood }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="keyword"><i class="fas fa-search"></i> Keyword:</label>
+            <input type="text" id="keyword" name="keyword" value="{{ request.GET.keyword }}" placeholder="Search in entries..." class="fancy-input">
+          </div>
+          
+          <div class="form-group">
+            <label for="month"><i class="fas fa-calendar-alt"></i> Month:</label>
+            <select id="month" name="month" class="fancy-input">
+              <option value="">All Months</option>
+              {% for num, name in months %}
+                <option value="{{ num }}" {% if request.GET.month == num|stringformat:"s" %}selected{% endif %}>
+                  {{ name }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-filter">
+            <i class="fas fa-search"></i> Find Entries
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="paper-fold"></div>
+  </div>
+
+  <!-- Sort Controls -->
+  <div class="sort-controls animate__animated animate__fadeIn delay-2">
+    <form method="GET" action="{% url 'journal_entries' %}" class="sort-form">
+      <label for="sort"><i class="fas fa-sort"></i> Sort by:</label>
+      <select name="sort" id="sort" class="fancy-input" onchange="this.form.submit()">
+        <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Newest First</option>
+        <option value="oldest" {% if request.GET.sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+      </select>
+    </form>
+  </div>
+
+  <!-- Journal Entries -->
+  <div class="entries-container animate__animated animate__fadeIn delay-3">
+    {% if entries %}
+      {% for entry in entries %}
+        <div class="journal-entry" id="entry-{{ entry.id }}" data-mood="{{ entry.mood|lower }}">
+          <div class="entry-header">
+            <div class="entry-date">
+              <i class="fas fa-calendar-day"></i>
+              <span>{{ entry.date }}</span>
+            </div>
+            <div class="mood-badge mood-{{ entry.mood|lower }}">
+              {% if entry.mood == "Happy" %}
+                <i class="fas fa-smile"></i>
+              {% elif entry.mood == "Sad" %}
+                <i class="fas fa-frown"></i>
+              {% elif entry.mood == "Angry" %}
+                <i class="fas fa-angry"></i>
+              {% elif entry.mood == "Stressed" %}
+                <i class="fas fa-tired"></i>
+              {% elif entry.mood == "Inspired" %}
+                <i class="fas fa-lightbulb"></i>
+              {% elif entry.mood == "Grateful" %}
+                <i class="fas fa-pray"></i>
+              {% elif entry.mood == "Calm" %}
+                <i class="fas fa-peace"></i>
+              {% elif entry.mood == "Reflective" %}
+                <i class="fas fa-brain"></i>
+              {% else %}
+                <i class="fas fa-meh"></i>
+              {% endif %}
+              {{ entry.mood }}
+            </div>
+          </div>
+          
+          <div class="entry-body">
+            <div class="entry-content" id="text-{{ entry.id }}">
+              {{ entry.entry|linebreaks }}
+            </div>
+            
+            <textarea id="edit-{{ entry.id }}" class="entry-textarea" style="display:none;">{{ entry.entry }}</textarea>
+          </div>
+          
+          <div class="entry-footer">
+            <div class="entry-actions">
+              <button type="button" class="btn btn-edit edit-btn" data-id="{{ entry.id }}">
+                <i class="fas fa-pencil-alt"></i> Edit
+              </button>
+              <button type="button" class="btn btn-save save-btn" data-id="{{ entry.id }}" style="display:none;">
+                <i class="fas fa-save"></i> Save
+              </button>
+              <button type="button" class="btn btn-delete delete-btn" data-id="{{ entry.id }}">
+                <i class="fas fa-trash-alt"></i> Delete
+              </button>
+            </div>
+            <div class="page-curl"></div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-journal">
+        <i class="fas fa-book animate__animated animate__pulse infinite"></i>
+        <p>No journal entries match your filters.</p>
+        <small>Try different filter options or <a href="{% url 'journal_entry' %}">create a new entry</a>.</small>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Pagination -->
+  {% if entries.paginator.num_pages > 1 %}
+  <div class="journal-pagination">
+    {% for page_num in entries.paginator.page_range %}
+      {% if entries.number == page_num %}
+        <span class="page-item current">{{ page_num }}</span>
+      {% else %}
+        <a class="page-item" href="?page={{ page_num }}&date={{ request.GET.date }}&mood={{ request.GET.mood }}&keyword={{ request.GET.keyword }}&month={{ request.GET.month }}&sort={{ request.GET.sort }}">{{ page_num }}</a>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</div>
+
+<style>
+  /* Journal Entries */
+  .journal-entries-container {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  .journal-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+    color: var(--accent-color);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .journal-title::after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 3px;
+    background-color: var(--secondary-color);
+    border-radius: 3px;
+  }
+  
+  /* Filter */
+  .filter-paper {
+    background-color: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 20px var(--shadow-color);
+    margin-bottom: 2rem;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--secondary-color);
+    overflow: hidden;
+  }
+  
+  .filter-paper:hover {
+    transform: translateY(-5px) rotate(0.5deg);
+    box-shadow: 0 15px 30px var(--shadow-color);
+  }
+  
+  .filter-paper h3 {
+    color: var(--accent-color);
+    margin-bottom: 1.2rem;
+    font-size: 1.3rem;
+    border-bottom: 1px dashed var(--secondary-color);
+    padding-bottom: 0.8rem;
+  }
+  
+  .filter-paper h3 i {
+    margin-right: 10px;
+  }
+  
+  .paper-content {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .paper-fold {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, transparent 50%, var(--secondary-color) 50%);
+    border-radius: 0 0 10px 0;
+  }
+  
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group label {
+    margin-bottom: 0.5rem;
+    color: var(--accent-color);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .fancy-input {
+    padding: 0.8rem;
+    border: 1px solid var(--secondary-color);
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.7);
+    font-family: 'Garamond', 'Times New Roman', serif;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .fancy-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(166, 124, 82, 0.2);
+    outline: none;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
+  .btn-filter {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.8rem 1.5rem;
+    font-family: 'Garamond', 'Times New Roman', serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px var(--shadow-color);
+  }
+  
+  .btn-filter:hover {
+    background-color: #8b6842;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px var(--shadow-color);
+  }
+  
+  /* Sort Controls */
+  .sort-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.5rem;
+  }
+  
+  .sort-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+    border: 1px solid var(--secondary-color);
+  }
+  
+  .sort-form label {
+    color: var(--accent-color);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .sort-form select {
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    padding: 5px 10px;
+    background-color: #f8f3ed;
+  }
+  
+  /* Journal Entries */
+  .entries-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .journal-entry {
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px var(--shadow-color);
+    border: 1px solid var(--secondary-color);
+    transition: all 0.3s ease;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: fadeIn 0.5s ease;
+  }
+  
+  .journal-entry:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px var(--shadow-color);
+  }
+  
+  /* Different borderbased on mood */
+  .journal-entry[data-mood="happy"],
+  .journal-entry[data-mood="inspired"],
+  .journal-entry[data-mood="grateful"] {
+    border-left: 5px solid #88c9a1;
+  }
+  
+  .journal-entry[data-mood="sad"],
+  .journal-entry[data-mood="angry"],
+  .journal-entry[data-mood="stressed"] {
+    border-left: 5px solid #e07a7a;
+  }
+  
+  .journal-entry[data-mood="neutral"],
+  .journal-entry[data-mood="calm"],
+  .journal-entry[data-mood="reflective"] {
+    border-left: 5px solid #7aade0;
+  }
+  
+  .entry-header {
+    background-color: var(--primary-color);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed var(--secondary-color);
+  }
+  
+  .entry-date {
+    font-weight: 500;
+    color: var(--accent-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+  }
+  
+  .mood-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  
+  .mood-happy, .mood-inspired, .mood-grateful {
+    background-color: rgba(136, 201, 161, 0.3);
+    color: #2e7d32;
+  }
+  
+  .mood-sad, .mood-angry, .mood-stressed {
+    background-color: rgba(224, 122, 122, 0.3);
+    color: #c62828;
+  }
+  
+  .mood-neutral, .mood-calm, .mood-reflective {
+    background-color: rgba(122, 173, 224, 0.3);
+    color: #1565c0;
+  }
+  
+  .entry-body {
+    padding: 1.5rem;
+    position: relative;
+    background-image: linear-gradient(transparent 0px, transparent 23px, #f0e8e0 24px);
+    background-size: 100% 24px;
+  }
+  
+  .entry-body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 25px;
+    bottom: 0;
+    width: 1px;
+    background-color: #f0c8a4;
+    opacity: 0.5;
+  }
+  
+  .entry-content {
+    line-height: 24px;
+    padding-left: 35px;
+    color: var(--text-color);
+    white-space: pre-line;
+    font-size: 1.05rem;
+  }
+  
+  .entry-textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 0 0 0 35px;
+    border: none;
+    font-family: 'Garamond', 'Times New Roman', serif;
+    color: var(--text-color);
+    resize: vertical;
+    background-color: transparent;
+    line-height: 24px;
+    font-size: 1.05rem;
+  }
+  
+  .entry-textarea:focus {
+    outline: none;
+  }
+  
+  .entry-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background-color: #fbf7f3;
+    border-top: 1px dashed var(--secondary-color);
+    position: relative;
+  }
+  
+  .entry-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn {
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    border: none;
+    font-family: 'Garamond', 'Times New Roman', serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn-edit {
+    background-color: #7d6e83;
+    color: white;
+  }
+  
+  .btn-edit:hover {
+    background-color: #6a5d70;
+  }
+  
+  .btn-save {
+    background-color: var(--accent-color);
+    color: white;
+  }
+  
+  .btn-save:hover {
+    background-color: #8b6842;
+  }
+  
+  .btn-delete {
+    background-color: #e3b7a0;
+    color: #7d5035;
+  }
+  
+  .btn-delete:hover {
+    background-color: #d69f80;
+  }
+  
+  .page-curl {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 25px;
+    height: 25px;
+    background: linear-gradient(135deg, transparent 50%, var(--secondary-color) 50%);
+    border-radius: 0 0 8px 0;
+  }
+  
+  /* Empty Journal */
+  .empty-journal {
+    text-align: center;
+    padding: 3rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px var(--shadow-color);
+    border: 1px dashed var(--secondary-color);
+  }
+  
+  .empty-journal i {
+    font-size: 3rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+    display: block;
+  }
+  
+  .empty-journal p {
+    font-size: 1.2rem;
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+  }
+  
+  .empty-journal small {
+    color: var(--text-color);
+  }
+  
+  .empty-journal a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .empty-journal a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Pagination */
+  .journal-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .page-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: white;
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+    box-shadow: 0 3px 6px var(--shadow-color);
+    border: 1px solid var(--secondary-color);
+    transition: all 0.3s ease;
+  }
+  
+  .page-item:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px var(--shadow-color);
+  }
+  
+  .page-item.current {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    .sort-controls {
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    
+    .entry-header {
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    
+    .mood-badge {
+      align-self: flex-start;
+    }
+  }
+  
+  /* Animationn */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .delay-1 {
+    animation-delay: 0.2s;
+  }
+  
+  .delay-2 {
+    animation-delay: 0.4s;
+  }
+  
+  .delay-3 {
+    animation-delay: 0.6s;
+  }
+  
+  .journal-entry:nth-child(odd) {
+    transform: rotate(-0.5deg);
+  }
+  
+  .journal-entry:nth-child(even) {
+    transform: rotate(0.5deg);
+  }
+  
+  .journal-entry:hover {
+    transform: translateY(-5px) rotate(0deg);
+  }
+  
+  .entry-textarea::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .entry-textarea::-webkit-scrollbar-track {
+    background: #f8f3ed;
+  }
+  
+  .entry-textarea::-webkit-scrollbar-thumb {
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+  }
+
+  :root {
+    --primary-color: #fcf5ee;
+    --secondary-color: #e3b7a0;
+    --accent-color: #a67c52;
+    --text-color: #5d4037;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // animation
+    const entries = document.querySelectorAll('.journal-entry');
+    entries.forEach((entry, index) => {
+      entry.style.animationDelay = `${0.1 * index}s`;
+    });
+    
+    // Add hover effects
+    const filterPaper = document.querySelector('.filter-paper');
+    if (filterPaper) {
+      filterPaper.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-5px) rotate(0.5deg)';
+      });
+      
+      filterPaper.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) rotate(0deg)';
+      });
+    }
+    
+    // rotate
+    entries.forEach(entry => {
+      const originalTransform = entry.style.transform;
+      
+      entry.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-5px) rotate(0deg)';
+      });
+      
+      entry.addEventListener('mouseleave', function() {
+        this.style.transform = originalTransform;
+      });
+    });
+    
+    // Edit button
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          document.getElementById(`text-${id}`).style.display = 'none';
+          document.getElementById(`edit-${id}`).style.display = 'block';
+          btn.style.display = 'none';
+          document.querySelector(`.save-btn[data-id="${id}"]`).style.display = 'inline-flex';
+      });
+    });
+
+    // Save button
+    document.querySelectorAll('.save-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const newText = document.getElementById(`edit-${id}`).value;
+
+        fetch(`/accounts/update-journal/${id}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ entry: newText })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update UI with the new entry text
+                const textElement = document.getElementById(`text-${id}`);
+                textElement.innerHTML = newText.replace(/\n/g, '<br>');
+                textElement.style.display = 'block';
+                document.getElementById(`edit-${id}`).style.display = 'none';
+                btn.style.display = 'none';
+                document.querySelector(`.edit-btn[data-id="${id}"]`).style.display = 'inline-flex';
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('Error: ' + error.message);
+        });
+      });
+    });
+
+    // Delete button
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        if (!confirm("Are you sure you want to delete this entry?")) return;
+
+        fetch(`/accounts/delete-journal/${id}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the journal entry from the page 
+                const entryElement = document.getElementById(`entry-${id}`);
+                entryElement.style.animation = 'fadeOut 0.5s ease forwards';
+                setTimeout(() => {
+                    entryElement.remove();
+                    // Check if there are no more entries
+                    if (document.querySelectorAll('.journal-entry').length === 0) {
+                        location.reload(); 
+                    }
+                }, 500);
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('Error: ' + error.message);
+        });
+      });
+    });
+  });
+  
+  // Add fade
+  document.head.insertAdjacentHTML('beforeend', `
+    <style>
+      @keyframes fadeOut {
+        from { opacity: 1; transform: translateY(0); }
+        to { opacity: 0; transform: translateY(20px); }
+      }
+    </style>
+  `);
+</script>
+{% endblock %}

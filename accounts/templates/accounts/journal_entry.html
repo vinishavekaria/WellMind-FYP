@@ -1,0 +1,27 @@
+<!-- journal_create.html -->
+{% extends 'accounts/base_generic.html' %}
+
+{% block title %}Create Journal Entry{% endblock %}
+
+{% block content %}
+
+<div class="journal-container">
+    <h1><i class="fas fa-pen-fancy"></i> Create Journal Entry</h1>
+    
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        
+        <button type="submit">
+            <i class="fas fa-paper-plane"></i> Save Entry
+        </button>
+    </form>
+    
+    <i class="fas fa-moon doodle doodle-1"></i>
+    <i class="fas fa-cloud doodle doodle-2"></i>
+</div>
+{% endblock %}
+Last edited just now

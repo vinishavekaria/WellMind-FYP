@@ -1,0 +1,212 @@
+{% extends 'accounts/base_generic.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<a href="{% url 'journal_entry' %}" class="btn btn-info">Create Entry</a>
+<a href="{% url 'journal_entries' %}" class="btn btn-info">View Journal Entries</a>
+<a href="{% url 'sentiment_line_chart' %}" class="btn btn-info">View Sentiment Line Chart</a>
+<a href="{% url 'logout' %}" class="btn btn-info">Logout</a>
+
+
+
+<h2>Your Mood Pixel Chart for {{ year }}</h2>
+
+<div class="container">
+    <div class="pixel-chart">
+        <div class="pixel-grid">
+            {% for date, mood in mood_data.items %}
+                <div class="pixel" title="{{ date|date:'F j' }}: {{ mood }}" 
+                    style="background-color: {{ mood|get_item }};">
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="mood-key">
+        <h3>Mood Color Key</h3>{% extends 'accounts/base_generic.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Mood & Sentiment Dashboard</h1>
+    
+    <!-- Month Selection Filter -->
+    <div class="row mb-4">
+        <div class="col-md-6 offset-md-3">
+            <form method="get" class="d-flex">
+                <select name="month" class="form-control me-2">
+                    <option value="">Entire Year</option>
+                    {% for month_num, month_name in months %}
+                        <option value="{{ month_num }}" {% if selected_month == month_num %}selected{% endif %}>{{ month_name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
+        </div>
+    </div>
+    
+    {% if no_entries %}
+        <div class="alert alert-info text-center">
+            No journal entries found for the selected time period.
+        </div>
+    {% else %}
+        <div class="row mb-5">
+            <!-- Sentiment Line Chart -->
+            <div class="col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Mood Sentiment Analysis</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="data:image/png;base64,{{ sentiment_chart_base64 }}" alt="Sentiment Analysis Chart" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-5">
+            <!-- Mood Pixel Chart -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Mood Calendar</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="mood-calendar">
+                            {% for date, mood in mood_data.items %}
+                                <div class="mood-pixel" style="background-color: {{ mood|get_item }}" 
+                                     title="{{ date|date:'F j, Y' }}: {{ mood }}"></div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mood Pie Chart -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Mood Distribution</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="data:image/png;base64,{{ pie_chart_base64 }}" alt="Mood Distribution Chart" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mood key -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Mood Legend</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="mood-legend d-flex flex-wrap justify-content-center">
+                            {% for mood, color in mood_colors.items %}
+                                <div class="legend-item me-3 mb-2">
+                                    <div class="legend-color" style="background-color: {{ color }}"></div>
+                                    <span class="legend-label">{{ mood }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .mood-calendar {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(20px, 1fr));
+        gap: 2px;
+    }
+    
+    .mood-pixel {
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+    }
+    
+    .mood-legend {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-right: 15px;
+    }
+    
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+        margin-right: 5px;
+    }
+</style>
+{% endblock %}
+        <ul>
+            {% for mood, color in mood_colors.items %}
+                <li><span class="key-color" style="background-color: {{ color }};"></span> {{ mood }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<style>
+    .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .pixel-grid {
+        display: grid;
+        grid-template-columns: repeat(31, 1fr); 
+        grid-template-rows: repeat(12, 1fr); 
+        gap: 2px;
+    }
+
+    .pixel {
+        width: 20px;
+        height: 20px;
+        border-radius: 2px;
+        transition: transform 0.2s;
+    }
+
+    .pixel:hover {
+        transform: scale(1.2);
+        border: 1px solid #000;
+    }
+
+    .mood-key {
+        width: 200px;
+        padding-left: 20px;
+    }
+
+    .mood-key ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .mood-key li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+
+    .key-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+</style>
+
+{% endblock %}

@@ -1,0 +1,793 @@
+{% block content %}
+<div class="music-container">
+    <div class="music-header">
+        <!-- Hamburger Menu Button -->
+        <div class="hamburger-menu">
+            <div class="hamburger-icon" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <!-- Menu -->
+            <nav class="main-nav">
+                <div id="menuLinks" class="menu-links">
+                    <a href="{% url 'welcome' %}"><span class="menu-icon">🏠</span> Home Page</a>
+                    <a href="{% url 'journal_entry' %}"><span class="menu-icon">📓</span> Journal</a>
+                    <a href="{% url 'journal_entries' %}"><span class="menu-icon">📚</span> My Entries</a>
+                    <a href="{% url 'todo_list' %}"><span class="menu-icon">📝</span> To-Do</a>
+                    <a href="{% url 'mood_dashboard' %}"><span class="menu-icon">📊</span> Mood Charts</a>
+                    <a href="{% url 'mood_music' %}"><span class="menu-icon">🎵</span> Mood Music</a>
+                    <a href="{% url 'wellness_tips' %}"><span class="menu-icon">💡</span> Wellness Tips</a>
+                    <a href="{% url 'resources' %}"><span class="menu-icon">🌿</span> Resources</a>
+                    <a href="{% url 'settings' %}"><span class="menu-icon">⚙️</span> Settings</a>
+                    <a href="{% url 'logout' %}"><span class="menu-icon">🚪</span> Logout</a>
+                </div>
+            </nav>
+        </div>
+        
+        <h1 class="main-title">Mood <span class="accent">Music</span></h1>
+        <div class="music-wave">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+        </div>
+    </div>
+
+    <!-- Current Mood -->
+    <div class="mood-display">
+        <div class="mood-bubble">{{ user_mood|title }}</div>
+    </div>
+
+    <!-- Recommended Playlist -->
+    <div class="recommended-playlist">
+        <h2><span class="highlight">Recommended</span> for your mood</h2>
+        <div class="playlist-card featured">
+            {% if recommended_playlist %}
+                <div class="playlist-wrapper">
+                    <iframe class="playlist-iframe" src="{{ recommended_playlist.0 }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="playlist-overlay">
+                        <div class="pulse-circle"></div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="no-playlist">
+                    <div class="empty-illustration">
+                        <div class="record-player">
+                            <div class="record-disc"></div>
+                            <div class="record-arm"></div>
+                        </div>
+                    </div>
+                    <p>No recommended playlist available yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Mood Tabs -->
+    <div class="mood-tabs-container">
+        <h3>Explore <span class="highlight">Other Moods</span></h3>
+        <div class="mood-tabs">
+            {% for mood, playlists in all_playlists %}
+                <button class="mood-tab" data-mood="{{ mood|lower }}">{{ mood|title }}</button>
+            {% endfor %}
+        </div>
+
+        <!-- Mood Playlists Content -->
+        <div class="mood-playlists">
+            {% for mood, playlists in all_playlists %}
+                <div class="mood-playlist-content" id="mood-{{ mood|lower }}">
+                    <div class="playlist-grid">
+                        {% for playlist in playlists %}
+                            <div class="playlist-card">
+                                <div class="playlist-wrapper">
+                                    <iframe class="playlist-iframe" src="{{ playlist }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                </div>
+                                <!-- Heart icon for favoriting  -->
+                                <button class="favorite-button" data-song-url="{{ playlist }}">
+                                    <span class="heart-icon">
+                                        {% if playlist in favorite_uris %}
+                                            <svg class="filled-heart" viewBox="0 0 24 24"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"></path></svg>
+                                        {% else %}
+                                            <svg class="empty-heart" viewBox="0 0 24 24"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"></path></svg>
+                                        {% endif %}
+                                    </span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Favorites Section -->
+    <div class="favorites-section">
+        <h3>Your <span class="highlight">Favorites</span></h3>
+        <div class="favorites-container">
+            {% if favorite_uris %}
+                <div class="favorite-grid">
+                    {% for favorite_uri in favorite_uris %}
+                        <div class="playlist-card favorite">
+                            <div class="playlist-wrapper">
+                                <iframe class="playlist-iframe" src="{{ favorite_uri }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                <div class="favorite-badge">
+                                    <svg viewBox="0 0 24 24"><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-favorites">
+                    <div class="empty-illustration">
+                        <svg class="empty-heart-large" viewBox="0 0 24 24"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"></path></svg>
+                    </div>
+                    <p>You haven't added any favorites yet</p>
+                    <p class="subtext">Explore playlists and click the heart to add favorites</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstTab = document.querySelector('.mood-tab');
+        const firstMoodContent = document.querySelector('.mood-playlist-content');
+        
+        if (firstTab && firstMoodContent) {
+            firstTab.classList.add('active');
+            firstMoodContent.classList.add('active');
+        }
+        
+        // Tab click 
+        document.querySelectorAll('.mood-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.mood-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.mood-playlist-content').forEach(c => c.classList.remove('active'));
+                
+                this.classList.add('active');
+                
+                
+                const mood = this.getAttribute('data-mood');
+                const content = document.getElementById('mood-' + mood);
+                if (content) {
+                    content.classList.add('active');
+                }
+            });
+        });
+        
+        // menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const menuLinks = document.getElementById('menuLinks');
+        
+        menuToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            menuLinks.classList.toggle('show');
+        });
+        
+        // Close menu
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.hamburger-menu') && menuLinks.classList.contains('show')) {
+                menuToggle.classList.remove('active');
+                menuLinks.classList.remove('show');
+            }
+        });
+    });
+
+    // Favorite button click 
+    document.querySelectorAll('.favorite-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const songUrl = this.getAttribute('data-song-url');
+            const heartIcon = this.querySelector('.heart-icon');
+            
+            // Add animation
+            this.classList.add('clicked');
+            setTimeout(() => {
+                this.classList.remove('clicked');
+            }, 300);
+            
+            fetch('{% url "save_favorite" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify({ song_url: songUrl }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the heart icon 
+                    if (data.action === 'added') {
+                        heartIcon.innerHTML = '<svg class="filled-heart" viewBox="0 0 24 24"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"></path></svg>';
+                    } else {
+                        heartIcon.innerHTML = '<svg class="empty-heart" viewBox="0 0 24 24"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"></path></svg>';
+                    }
+                    
+                }
+            });
+        });
+    });
+</script>
+
+<!-- Styles -->
+<style>
+    /* Color Variables */
+    :root {
+        --primary: #8e44ad;
+        --primary-light: #9b59b6;
+        --primary-dark: #6c3483;
+        --secondary: #2ecc71;
+        --accent: #f39c12;
+        --accent-light: #f1c40f;
+        --background: #0f0f1a;
+        --background-light: #1a1a2e;
+        --text-light: #ffffff;
+        --text-dim: rgba(255, 255, 255, 0.7);
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --card-border: rgba(255, 255, 255, 0.1);
+        --gradient-1: linear-gradient(135deg, #8e44ad, #3498db);
+        --gradient-2: linear-gradient(135deg, #2ecc71, #1abc9c);
+        --gradient-3: linear-gradient(135deg, #f39c12, #e74c3c);
+        --menu-bg: rgba(15, 15, 26, 0.95);
+    }
+
+    /* Base Styles */
+    body {
+        background: var(--background);
+        background-image: 
+            radial-gradient(circle at 10% 20%, rgba(142, 68, 173, 0.3) 0%, transparent 20%),
+            radial-gradient(circle at 90% 60%, rgba(46, 204, 113, 0.3) 0%, transparent 20%),
+            radial-gradient(circle at 50% 80%, rgba(243, 156, 18, 0.3) 0%, transparent 20%);
+        background-attachment: fixed;
+        font-family: 'Poppins', 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        color: var(--text-light);
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* Music Container */
+    .music-container {
+        width: 90%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 0 80px;
+        position: relative;
+    }
+
+    /* Header Styling */
+    .music-header {
+        text-align: center;
+        margin-bottom: 40px;
+        position: relative;
+    }
+
+    /* Menu Styles */
+    .hamburger-menu {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 1000;
+    }
+
+    .hamburger-icon {
+        width: 30px;
+        height: 22px;
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        z-index: 1001;
+    }
+
+    .hamburger-icon span {
+        display: block;
+        height: 3px;
+        width: 100%;
+        background-color: var(--text-light);
+        border-radius: 3px;
+        transition: all 0.3s ease;
+    }
+
+    /* animation */
+    .hamburger-icon.active span:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
+
+    .hamburger-icon.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger-icon.active span:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+
+    /* Navigation Menu */
+    .main-nav {
+        position: relative;
+    }
+
+    .menu-links {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        height: 100vh;
+        background: var(--menu-bg);
+        padding: 70px 20px 20px;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(-100%);
+        transition: transform 0.4s cubic-bezier(0.77, 0.2, 0.05, 1.0);
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+        overflow-y: auto;
+        z-index: 1000;
+    }
+
+    .menu-links.show {
+        transform: translateX(0);
+    }
+
+    .menu-links a {
+        color: var(--text-light);
+        text-decoration: none;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+    .menu-links a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(5px);
+    }
+
+    .menu-icon {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    .main-title {
+        font-size: 4rem;
+        font-weight: 800;
+        margin: 0;
+        background: linear-gradient(90deg, #ffffff, #9b59b6);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        letter-spacing: 1px;
+        animation: titleGlow 3s infinite alternate;
+        position: relative;
+    }
+
+    @keyframes titleGlow {
+        0% {
+            text-shadow: 0 0 10px rgba(155, 89, 182, 0.3);
+        }
+        100% {
+            text-shadow: 0 0 20px rgba(155, 89, 182, 0.7);
+        }
+    }
+
+    .accent {
+        color: var(--accent);
+        background: linear-gradient(90deg, var(--accent), var(--accent-light));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .highlight {
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    /* Music  */
+    .music-wave {
+        position: relative;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        margin: 20px 0;
+    }
+
+    .music-wave span {
+        display: block;
+        width: 3px;
+        margin: 0 3px;
+        border-radius: 3px;
+        background: var(--primary);
+        animation: wave 1.2s infinite ease-in-out alternate;
+    }
+
+    .music-wave span:nth-child(1) { animation-delay: -1.2s; height: 10px; }
+    .music-wave span:nth-child(2) { animation-delay: -1.1s; height: 15px; }
+    .music-wave span:nth-child(3) { animation-delay: -1.0s; height: 20px; }
+    .music-wave span:nth-child(4) { animation-delay: -0.9s; height: 25px; }
+    .music-wave span:nth-child(5) { animation-delay: -0.8s; height: 30px; }
+    .music-wave span:nth-child(6) { animation-delay: -0.7s; height: 25px; }
+    .music-wave span:nth-child(7) { animation-delay: -0.6s; height: 20px; }
+    .music-wave span:nth-child(8) { animation-delay: -0.5s; height: 15px; }
+    .music-wave span:nth-child(9) { animation-delay: -0.4s; height: 10px; }
+    .music-wave span:nth-child(10) { animation-delay: -0.3s; height: 5px; }
+
+    @keyframes wave {
+        0% {
+            height: 5px;
+            background: var(--primary-light);
+        }
+        100% {
+            height: 30px;
+            background: var(--accent);
+        }
+    }
+
+    /* Mood Display */
+    .mood-display {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+    }
+
+    .mood-bubble {
+        background: var(--gradient-1);
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        box-shadow: 0 10px 25px rgba(142, 68, 173, 0.4);
+        position: relative;
+        animation: float 3s infinite ease-in-out;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    /* Section Headings */
+    h2, h3 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 30px 0;
+        text-align: center;
+        color: var(--text-light);
+        position: relative;
+    }
+
+    h2::after, h3::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 4px;
+        background: var(--gradient-1);
+        margin: 15px auto;
+        border-radius: 2px;
+    }
+
+ 
+    .recommended-playlist {
+        margin: 50px 0;
+        position: relative;
+    }
+
+    .featured {
+        max-width: 800px;
+        margin: 0 auto;
+        transform: scale(1.05);
+    }
+
+
+    .playlist-card {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        margin: 15px;
+    }
+
+    .playlist-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        border-color: var(--primary-light);
+    }
+
+    .playlist-wrapper {
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        overflow: hidden;
+    }
+
+    .playlist-iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        z-index: 1;
+    }
+
+    .playlist-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.1);
+        pointer-events: none;
+        z-index: 2;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .playlist-card:hover .playlist-overlay {
+        opacity: 1;
+    }
+
+    .pulse-circle {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 50px;
+        height: 50px;
+        background-color: rgba(155, 89, 182, 0.5);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0.7;
+        }
+        70% {
+            transform: translate(-50%, -50%) scale(2);
+            opacity: 0;
+        }
+        100% {
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0;
+        }
+    }
+
+    /* Mood Tabs */
+    .mood-tabs-container {
+        margin: 60px 0;
+    }
+
+    .mood-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 30px;
+    }
+
+    .mood-tab {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        color: var(--text-light);
+        padding: 12px 25px;
+        border-radius: 30px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .mood-tab:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-3px);
+    }
+
+    .mood-tab.active {
+        background: var(--gradient-1);
+        border-color: transparent;
+        box-shadow: 0 5px 15px rgba(142, 68, 173, 0.4);
+    }
+
+    .mood-playlist-content {
+        display: none;
+    }
+
+    .mood-playlist-content.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .playlist-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    /* Favorite Button */
+    .favorite-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 3;
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+
+    .favorite-button:hover {
+        transform: scale(1.2);
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .favorite-button.clicked {
+        animation: heartClick 0.3s forwards;
+    }
+
+    @keyframes heartClick {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.4);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .heart-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .empty-heart {
+        fill: rgba(255, 255, 255, 0.7);
+        stroke: white;
+        stroke-width: 1px;
+        transition: fill 0.3s ease;
+    }
+
+    .filled-heart {
+        fill: #e74c3c;
+        animation: heartFill 0.5s forwards;
+    }
+
+    @keyframes heartFill {
+        0% {
+            transform: scale(0);
+        }
+        50% {
+            transform: scale(1.2);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    /* Favorites Section */
+    .favorites-section {
+        margin: 60px 0 30px;
+    }
+
+    .favorite-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .favorite-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: var(--gradient-3);
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .favorite-badge svg {
+        width: 18px;
+        height: 18px;
+        fill: white;
+    }
+
+
+    .no-playlist, .no-favorites {
+        text-align: center;
+        padding: 50px 20px;
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--card-border);
+    }
+
+    .empty-illustration {
+        margin-bottom: 20px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .record-player {
+        position: relative;
+        width: 100px;
+        height: 80px;
+    }
+
+    .record-disc {
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #333;
+        border: 10px solid #222;
+        top: 10px;
+        left: 10px;
+        animation: rotate 4s linear infinite;
+    }
+
+    .record-disc::after {
+        content: '';
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #444;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .record-arm {
+        position: absolute;
+        width: 50px;
+        height: 8px;
+        background: #444;
+        top: 30px;
+        right: 0;
+        transform-origin: right;
+        transform: rotate(-30deg);
+        animation: armMove 8s infinite alternate ease-in-out;
+    }
+
+    @keyframes rotate {
+        0% {
+            transform: rotate(0);
+        }
+        100% {
+            transform: rotate(360deg);
+
+</style>
+{% endblock %}
