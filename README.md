@@ -10,7 +10,8 @@ WellMind is a Django-based wellness web application designed to help users impro
 
 - Mood journal with sentiment analysis  
 - AI-powered wellness tips  
-- Water intake and sleep tracking  
+- Water intake and sleep tracking
+- Interactive visualisations 
 - Daily inspirational quotes  
 - To-do task management  
 - Mood-based music suggestions 
